@@ -1,5 +1,6 @@
 <?php
 include_once("model/Model.php");
+include_once("model/Book.php");
 include_once("view/BooklistView.php");
 include_once("view/BookView.php");
 
@@ -14,8 +15,14 @@ include_once("view/BookView.php");
 class Controller {
 	public $model;
 	
+	public static $OP_PARAM_NAME = 'op';
+	public static $DEL_OP_NAME = 'del';
+	public static $ADD_OP_NAME = 'add';
+	public static $MOD_OP_NAME = 'mod';
+	
 	public function __construct()  
     {  
+		session_start();
         $this->model = new Model();
     } 
 	
@@ -23,18 +30,36 @@ class Controller {
  */
 	public function invoke()
 	{
-		if (!isset($_GET['book']))
-		{
-			// no special book is requested, we'll show a list of all available books
-			$books = $this->model->getBookList();
-			$view = new BooklistView($books);
-			$view->create();
-		}
-		else
+		if (isset($_GET['id']))
 		{
 			// show the requested book
-			$book = $this->model->getBookById($_GET['book']);
-			$view = new BookView($book);
+			$book = $this->model->getBookById($_GET['id']);
+			$view = new BookView($book, self::$OP_PARAM_NAME, self::$DEL_OP_NAME, self::$MOD_OP_NAME);
+			$view->create();
+		}
+		else 
+		{
+			if (isset($_POST[self::$OP_PARAM_NAME]))//A book record is to be added, deleted, or modified
+			{
+				switch($_POST[self::$OP_PARAM_NAME]) 
+				{
+				case self::$ADD_OP_NAME : 
+				    $book = new Book($_POST['title'], $_POST['author'], $_POST['description']);
+				    $this->model->addBook($book);
+				    break;
+				case self::$DEL_OP_NAME : 
+				    $this->model->deleteBook($_POST['id']);
+				    break;
+				case self::$MOD_OP_NAME : 
+				    $book = new Book($_POST['title'], $_POST['author'], $_POST['description'], $_POST['id']);
+				    $this->model->modifyBook($book);
+				    break;				
+				}
+			}
+
+			// no special book is requested, we'll show a list of all available books
+			$books = $this->model->getBookList();
+			$view = new BooklistView($books, self::$OP_PARAM_NAME, self::$ADD_OP_NAME);
 			$view->create();
 		}
 	}

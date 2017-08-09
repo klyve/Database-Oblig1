@@ -7,34 +7,50 @@ include_once('View.php');
  */
 Class BooklistView extends View {
 	protected $books;
+	protected $idParamName;
+	protected $opParamName;
+	protected $addOpName;
 	
     /** Constructor 
      * @author Rune Hjelsvold
 	 * @param $books The collection of books - in the form of an array of Books - to be shown.
+	 * @param $opParamName The name of the parameter to used in the query string for passing the operation to be performed.
+	 * @param $addOpName The name to be used for the add operation.
      * @see http://php-html.net/tutorials/model-view-controller-in-php/ The tutorial code used as basis.
      */
-	public function __construct($books)  
+	public function __construct($books, $opParamName, $addOpName)  
     {  
         $this->books = $books;
+        $this->opParamName = $opParamName;
+        $this->addOpName = $addOpName;
     } 
 	
+	/** Used by the superclass to generate page title
+	 */
 	protected function getPageTitle() {
 		return 'Book Collection';
 	}
 	
+	/** Used by the superclass to generate page content
+	 */
 	protected function getPageContent() {
 		$content = <<<HTML
+<h2>Current Titles</h2>
 <table>
 	<tr><td>ID</td><td>Title</td><td>Author</td><td>Description</td></tr>
 HTML;
 
 		foreach ($this->books as $book) {
-    		$content .= '<tr><td><a href="index.php?book='.$book->id.'">'.$book->id.'</a></td><td>'.$book->title.'</td><td>'.$book->author.'</td><td>'.$book->description.'</td></tr>';
+    		$content .= '<tr><td><a href="index.php?id=' . $book->id . '">' . $book->id . '</a></td>'
+			          . '<td>' . htmlspecialchars($book->title) . '</td><td>' . htmlspecialchars($book->author) . '</td>'
+					  . '<td>' . htmlspecialchars($book->description) . '</td></tr>';
 		}
 
 		$content .= <<<HTML
 </table>
-
+<h2>New Titles</h2>
+HTML;
+		$content .= $this->createAddForm() . <<<HTML
 </body>
 </html>
 HTML;
@@ -42,5 +58,20 @@ HTML;
         return $content;
 	}
 	
+	/** Helper function generating HTML code for the form for adding new books to the collection
+	 */
+	protected function createAddForm() {
+		return 
+		'<form action="index.php" method="post">'
+		. '<input name="'.$this->opParamName.'" value="'.$this->addOpName.'" type="hidden"/>'
+		. 'Title:<br/>'
+		. '<input name="title" type=text" value=""/><br/>'
+		. 'Author:<br/>'
+		. '<input name="author" type=text" value=""/><br/>'
+		. 'Description:<br/>'
+		. '<input name="description" type=text" value=""/><br/>'
+        . '<input type="submit" value="Add new book">'
+        . '</form>';
+	}
 }
 ?>

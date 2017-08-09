@@ -16,7 +16,6 @@ abstract Class View {
 	abstract protected function getPageContent();
 
 	/** Creates HTML code for the given view page
-	 * @return view page content
 	 */
 	public function create() {
 	    echo <<<HTML
