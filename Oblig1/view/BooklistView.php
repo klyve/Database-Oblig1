@@ -37,16 +37,20 @@ Class BooklistView extends View {
 		$content = <<<HTML
 <h2>Current Titles</h2>
 <table>
+  <thead>
 	<tr><td>ID</td><td>Title</td><td>Author</td><td>Description</td></tr>
+  </thead>
+  <tbody>
 HTML;
 
 		foreach ($this->books as $book) {
-    		$content .= '<tr><td><a href="index.php?id=' . $book->id . '">' . $book->id . '</a></td>'
+    		$content .= '<tr id="book' . $book->id . '"><td><a href="index.php?id=' . $book->id . '">' . $book->id . '</a></td>'
 			          . '<td>' . htmlspecialchars($book->title) . '</td><td>' . htmlspecialchars($book->author) . '</td>'
 					  . '<td>' . htmlspecialchars($book->description) . '</td></tr>';
 		}
 
 		$content .= <<<HTML
+  </tbody>
 </table>
 <h2>New Titles</h2>
 HTML;
@@ -62,7 +66,7 @@ HTML;
 	 */
 	protected function createAddForm() {
 		return 
-		'<form action="index.php" method="post">'
+		'<form id="addForm" action="index.php" method="post">'
 		. '<input name="'.$this->opParamName.'" value="'.$this->addOpName.'" type="hidden"/>'
 		. 'Title:<br/>'
 		. '<input name="title" type=text" value=""/><br/>'
@@ -70,7 +74,7 @@ HTML;
 		. '<input name="author" type=text" value=""/><br/>'
 		. 'Description:<br/>'
 		. '<input name="description" type=text" value=""/><br/>'
-        . '<input type="submit" value="Add new book">'
+        . '<input type="submit" value="Add new book"/>'
         . '</form>';
 	}
 }
