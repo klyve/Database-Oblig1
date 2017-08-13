@@ -69,7 +69,9 @@ class Model
 		$idx = $this->getBookIndexById($book->id);
 		if ($idx > -1)
 		{
-			$_SESSION['BookList'][$idx] = $book;
+			$_SESSION['BookList'][$idx]->title = $book->title;
+			$_SESSION['BookList'][$idx]->author = $book->author;
+			$_SESSION['BookList'][$idx]->description = $book->description;
 		}
 	}
 
