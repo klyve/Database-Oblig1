@@ -20,6 +20,7 @@ abstract Class View {
 	 */
 	public function create() {
 	    echo <<<HTML
+<!DOCTYPE html>
 <html>
 <head>
 <title>

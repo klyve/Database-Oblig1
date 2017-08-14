@@ -30,7 +30,7 @@ class Model {
 		// in a real life scenario this will be done through a db select command
 		$allBooks = $this->getBookList();
 		foreach ($allBooks as $book) {
-			if ($id == $book->id) {
+			if ($id == (string)$book->id) {
 				return $book;
 			}
 		}

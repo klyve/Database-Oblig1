@@ -29,14 +29,11 @@ Class BooklistView extends View {
 HTML;
 
 		foreach ($this->books as $book) {
-    		$content .= '<tr><td><a href="index.php?book='.$book->id.'">'.$book->id.'</a></td><td>'.$book->title.'</td><td>'.$book->author.'</td><td>'.$book->description.'</td></tr>';
+    		$content .= '<tr><td><a href="index.php?id='.$book->id.'">'.$book->id.'</a></td><td>'.$book->title.'</td><td>'.$book->author.'</td><td>'.$book->description.'</td></tr>';
 		}
 
 		$content .= <<<HTML
 </table>
-
-</body>
-</html>
 HTML;
 
         return $content;
