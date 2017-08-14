@@ -54,10 +54,7 @@ HTML;
 </table>
 <h2>New Titles</h2>
 HTML;
-		$content .= $this->createAddForm() . <<<HTML
-</body>
-</html>
-HTML;
+		$content .= $this->createAddForm();
 
         return $content;
 	}
@@ -69,11 +66,11 @@ HTML;
 		'<form id="addForm" action="index.php" method="post">'
 		. '<input name="'.$this->opParamName.'" value="'.$this->addOpName.'" type="hidden"/>'
 		. 'Title:<br/>'
-		. '<input name="title" type=text" value=""/><br/>'
+		. '<input name="title" type="text" value=""/><br/>'
 		. 'Author:<br/>'
-		. '<input name="author" type=text" value=""/><br/>'
+		. '<input name="author" type="text" value=""/><br/>'
 		. 'Description:<br/>'
-		. '<input name="description" type=text" value=""/><br/>'
+		. '<input name="description" type="text" value=""/><br/>'
         . '<input type="submit" value="Add new book"/>'
         . '</form>';
 	}

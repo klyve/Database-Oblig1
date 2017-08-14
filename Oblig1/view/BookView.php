@@ -37,9 +37,9 @@ Class BookView extends View {
 	protected function createDeleteButton() {
 		return 
 		'<form id="delForm" action="index.php" method="post">'
-		. '<input name="'.$this->opParamName.'" value="'.$this->delOpName.'" type="hidden"/>'
-		. '<input name="id" value="'.$this->book->id.'" type="hidden"/>'
-        . '<input type="submit" value="Delete book record"/>'
+		. '<input name="'.$this->opParamName.'" value="'.$this->delOpName.'" type="hidden" />'
+		. '<input name="id" value="'.$this->book->id.'" type="hidden" />'
+        . '<input type="submit" value="Delete book record" />'
         . '</form>';
 	}
 	
@@ -48,15 +48,15 @@ Class BookView extends View {
 	protected function createModifyForm() {
 		return 
 		'<form id="modForm" action="index.php" method="post">'
-		. '<input name="'.$this->opParamName.'" value="'.$this->modOpName.'" type="hidden"/>'
+		. '<input name="'.$this->opParamName.'" value="'.$this->modOpName.'" type="hidden" />'
 		. '<input name="id" value="'.$this->book->id.'" type="hidden"/>'
 		. 'Title:<br/>'
-		. '<input name="title" type=text" value="'.htmlspecialchars($this->book->title).'"/><br/>'
+		. '<input name="title" type="text" value="'.htmlspecialchars($this->book->title).'" /><br/>'
 		. 'Author:<br/>'
-		. '<input name="author" type=text" value="'.htmlspecialchars($this->book->author).'"/><br/>'
+		. '<input name="author" type="text" value="'.htmlspecialchars($this->book->author).'" /><br/>'
 		. 'Description:<br/>'
-		. '<input name="description" type=text" value="'.htmlspecialchars($this->book->description).'"/><br/>'
-        . '<input type="submit" value="Update book record"/>'
+		. '<input name="description" type="text" value="'.htmlspecialchars($this->book->description).'" /><br/>'
+        . '<input type="submit" value="Update book record" />'
         . '</form>';
 	}
 	
