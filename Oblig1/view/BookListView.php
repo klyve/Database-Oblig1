@@ -5,7 +5,7 @@ include_once('View.php');
  * @author Rune Hjelsvold
  * @see http://php-html.net/tutorials/model-view-controller-in-php/ The tutorial code used as basis.
  */
-Class BooklistView extends View {
+Class BookListView extends View {
 	protected $books;
 	protected $idParamName;
 	protected $opParamName;

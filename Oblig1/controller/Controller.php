@@ -1,7 +1,7 @@
 <?php
 include_once("model/Model.php");
 include_once("model/Book.php");
-include_once("view/BooklistView.php");
+include_once("view/BookListView.php");
 include_once("view/BookView.php");
 include_once("view/ErrorView.php");
 
@@ -68,7 +68,7 @@ class Controller {
 
 			// no special book is requested, we'll show a list of all available books
 			$books = $this->model->getBookList();
-			$view = new BooklistView($books, self::$OP_PARAM_NAME, self::$ADD_OP_NAME);
+			$view = new BookListView($books, self::$OP_PARAM_NAME, self::$ADD_OP_NAME);
 			$view->create();
 		}
 	}
