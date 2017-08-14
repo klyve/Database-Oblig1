@@ -23,8 +23,9 @@ class Model
 		} 
 	}
 	
-	/** Function returning the complete list of books in the collection
-	 * @return an array of book titles indexed by their ids
+	/** Function returning the complete list of books in the collection. Books are
+	 * returned in order of id
+	 * @return an array of book titles indexed and ordered by their id
 	 * @todo replace implementation using a real database
 	 */
 	public function getBookList()
