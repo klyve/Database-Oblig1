@@ -96,7 +96,7 @@ class Model
 	{
 		for ($i = 0; $i < sizeof($_SESSION['BookList']); $i++)
         {
-			if ($_SESSION['BookList'][$i]->id == $id)
+			if ((string)$_SESSION['BookList'][$i]->id === $id)
 			{
 				return $i;
 			}
