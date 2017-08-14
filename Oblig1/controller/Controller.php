@@ -3,6 +3,7 @@ include_once("model/Model.php");
 include_once("model/Book.php");
 include_once("view/BooklistView.php");
 include_once("view/BookView.php");
+include_once("view/ErrorView.php");
 
 /** The Controller is responsible for handling user requests, for exchanging data with the Model,
  * and for passing user response data to the various Views. 
@@ -34,8 +35,16 @@ class Controller {
 		{
 			// show the requested book
 			$book = $this->model->getBookById($_GET['id']);
-			$view = new BookView($book, self::$OP_PARAM_NAME, self::$DEL_OP_NAME, self::$MOD_OP_NAME);
-			$view->create();
+			if ($book)
+			{
+				$view = new BookView($book, self::$OP_PARAM_NAME, self::$DEL_OP_NAME, self::$MOD_OP_NAME);
+				$view->create();
+			}
+			else
+			{
+				$view = new ErrorView();
+				$view->create();
+			}
 		}
 		else 
 		{
