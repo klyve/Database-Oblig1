@@ -36,7 +36,7 @@ Class BooklistView extends View {
 	protected function getPageContent() {
 		$content = <<<HTML
 <h2>Current Titles</h2>
-<table>
+<table id='bookList'>
   <thead>
 	<tr><td>ID</td><td>Title</td><td>Author</td><td>Description</td></tr>
   </thead>
