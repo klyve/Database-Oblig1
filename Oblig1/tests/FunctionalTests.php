@@ -4,28 +4,80 @@ require_once("vendor/autoload.php");
 /**
  * Class for testing the functionality of an Oblig 1 implementation
  * in IMT2571.
+ * Please set the value of the $baseUrl to the URL of the assignment page
  * @author Rune Hjelsvold
  */
-class Oblig1Test extends \PHPUnit_Framework_TestCase
+class FunctionalTests extends \PHPUnit_Framework_TestCase
 {
+	/**
+	* Index of the collection page title in the PAGE_TITLES array
+	* @see PAGE_TITLE */
+	const COLLECTION_PAGE_TITLE_IDX = 0;
+
+	/**
+	* Index of the details page title in the PAGE_TITLES array
+	* @see PAGE_TITLE */
+	const DETAILS_PAGE_TITLE_IDX = 1;
+
+	/**
+	* Index of the error page title in the PAGE_TITLES array
+	* @see PAGE_TITLE */
+	const ERROR_PAGE_TITLE_IDX = 2;
+
+	/**
+	* Constant array for holding 
+	* @see PAGE_TITLE */
+	protected static $PAGE_TITLES = array(
+                        'Book Collection',
+						'Book Details',
+						'Error Page'
+	);
+	
+	/**
+	* Constant for the test case array key refering to the expected outcome of the test case 
+	* @see generateTestCases */
+	const OUTCOME_IDX = 'outcome';
+	
+	/**
+	* Constant used by test cases to specify that the corresponding book information is valid 
+	* @see generateTestCases */
+	const OUTCOME_SUCCESS = 0;
+	
+	/**
+	* Constant used by test cases to specify that the corresponding book information is valid
+	* @see generateTestCases */
+	const OUTCOME_FAILURE = 1;
+
 	/**
 	 * Holds the root URL for the Oblig 1 site.
 	 */
-	protected $baseUrl = 'http://localhost/IMT2571/Oblig1/mvc/';
+	protected $baseUrl = 'http://localhost/IMT2571/assignment1';
+	
+	/**
+	 * The Mink Session object.
+	 */
 	protected $session;
 	/**
 	 * Holds the ids of books created during testing for cleanup during teardown.
 	 */
 	protected $testBookIds;
 
+	/**
+	 * Initiates the testing session and the cleanup array.
+	 * @see teardown
+	 */
 	protected function setup()
 	{
+		// Create cleanup array
 		$this->testBookIds = array();
         $driver = new \Behat\Mink\Driver\GoutteDriver();
         $this->session = new \Behat\Mink\Session($driver);
         $this->session->start();
 	}
 		
+	/**
+	 * Removes entries for all books added to the system during testing.
+	 */
  	protected function teardown()
 	{
 		// Remove all book entries added when testing server
@@ -37,6 +89,13 @@ class Oblig1Test extends \PHPUnit_Framework_TestCase
 	/**
 	 * Generates a table of book data used when testing add and modify
 	 * operations.
+	 * @todo Add tests for invalid user data - i.e., title or author are empty
+	 *       strings
+	 * @return string[] Associative table of test values. Keys title, author, and
+	 *                  description refers to test values. Key self::OUTCOME_IDX points
+	 *					to whether the book information is valid and should be accepted
+	 *                  as a book record or if it should be rejected.
+	 * @see OUTCOME_IDX, self::OUTCOME_SUCCESS, self::OUTCOME_FAILURE
 	 */
 	protected function generateTestCases() 
 	{
@@ -46,21 +105,24 @@ class Oblig1Test extends \PHPUnit_Framework_TestCase
 		            (
 					    'title' => 'Test title',
 					    'author' => 'Test author',
-					    'description' => 'Test author'
+					    'description' => 'Test author',
+						self::OUTCOME_IDX => self::OUTCOME_SUCCESS
 					);
 		// Case where value contains single quote character - may break SQL statements
 		$cases[1] = array
 		            (
 					    'title' => "Test title with ' inside",
 					    'author' => "Test title with ' inside",
-					    'description' => "Test title with ' inside"
+					    'description' => "Test title with ' inside",
+						self::OUTCOME_IDX => self::OUTCOME_SUCCESS
 					);
 		// Case where value contains less than character - may break HTML code
 		$cases[2] = array
 		            (
 					    'title' => '<script document.body.style.visibility="hidden" />',
 					    'author' => '<script document.body.style.visibility="hidden" />',
-					    'description' => '<script document.body.style.visibility="hidden" />'
+					    'description' => '<script document.body.style.visibility="hidden" />',
+						self::OUTCOME_IDX => self::OUTCOME_SUCCESS
 					);
 		return $cases;
 	}
@@ -69,7 +131,7 @@ class Oblig1Test extends \PHPUnit_Framework_TestCase
 	 * Computes the number of books in the listed collection.
 	 * @param $page the web page containing the book list, or the site root page
 	 *        if no page reference is passed.
-	 * @return the number of books listed on the page.
+	 * @return integer the number of books listed on the page.
 	 */
 	protected function getBookListLength($page = null)
 	{
@@ -84,10 +146,10 @@ class Oblig1Test extends \PHPUnit_Framework_TestCase
 	/**
 	 * Adds a book to the collection. The id of the new created book is added to
 	 * in $testBookIds for cleanup purposes.
-	 * @param $id book id will be set when the book is added to the collection.
-	 * @param $title title of the book to be added.
-	 * @param $author author of the book to be added.
-	 * @param $description description of the book to be added.
+	 * @param integer $id book id will be set when the book is added to the collection.
+	 * @param string $title title of the book to be added.
+	 * @param string $author author of the book to be added.
+	 * @param string $description description of the book to be added.
 	 * @see teardown()
 	 */
  	protected function addBook(&$id, $title, $author, $description)
@@ -95,6 +157,7 @@ class Oblig1Test extends \PHPUnit_Framework_TestCase
 		// Load book list to get to the addForm
         $this->session->visit($this->baseUrl);
         $page = $this->session->getPage();
+		$listLength = $this->getBookListLength($page);
         $addForm = $page->find('xpath', 'body/form[@id="addForm"]');
 		
 		// Complete and submit addForm
@@ -103,16 +166,24 @@ class Oblig1Test extends \PHPUnit_Framework_TestCase
         $addForm->find('xpath', 'input[@name="description"]')->setValue($description);
 		$addForm->submit();
 		
-		// Record the id that was assigned to the book - assuming that the newest book is the last
-        $page = $this->session->getPage();		
-		$id = substr($page->find('xpath', 'body/table/tbody/tr[last()]/@id')->getText(),4);
-		$this->testBookIds[] = $id;
+        $page = $this->session->getPage();	
+		// Verify that the collection page was returned
+        $this->assertTrue($this->isExpectedPage($page, self::COLLECTION_PAGE_TITLE_IDX), 'addBook: expecting collection page');
+
+		// Record the id of the book if it was added to the list
+		if ($this->getBookListLength($page) > $listLength)
+		{
+			// Record the id that was assigned to the book - assuming that the newest book is the last and that id has the format bookXXX
+			$id = substr($page->find('xpath', 'body/table/tbody/tr[last()]/@id')->getText(),4);
+		
+			$this->testBookIds[] = $id;
+		}
 	}
 		
 	/**
 	 * Deletes a book from the collection. The id of the new created book is removed 
 	 * from $testBookIds because it no longer needs to be cleaned up.
-	 * @param $id id of the book to be deleted from the collection.
+	 * @param integer $id id of the book to be deleted from the collection.
 	 * @see teardown()
 	 * @uses removeBookEntry()
 	 */
@@ -128,7 +199,7 @@ class Oblig1Test extends \PHPUnit_Framework_TestCase
 	
 	/**
 	 * Removes a book entry from the web site collection
-	 * @param $id id of the book to be removed from the collection.
+	 * @param integer $id id of the book to be removed from the collection.
 	 * @see teardown()
 	 */
  	protected function removeBookEntry($bookId)
@@ -145,10 +216,10 @@ class Oblig1Test extends \PHPUnit_Framework_TestCase
 	/**
 	 * Modifies data about a book in the collection
 	 * one requested.
-	 * @param $id id of the book to be updated.
-	 * @param $title book title 
-	 * @param $author book author
-	 * @param $description book description
+	 * @param integer $id id of the book to be updated.
+	 * @param string $title book title 
+	 * @param string $author book author
+	 * @param string $description book description
 	 */
  	protected function modifyBook($id, $title, $author, $description)
 	{
@@ -168,11 +239,11 @@ class Oblig1Test extends \PHPUnit_Framework_TestCase
 	/**
 	 * Asserts that data about a book in the collection matches the passed values.
 	 * Also asserts that the data matches the data on the book details page.
-	 * @param $bookId id of the book to be asserted.
-	 * @param $bookTitle book title 
-	 * @param $bookAuthor book author
-	 * @param $bookDescription book description
-	 * @uses $assertBookDetails() 
+	 * @param integer $bookId id of the book to be asserted.
+	 * @param string $bookTitle book title 
+	 * @param string $bookAuthor book author
+	 * @param string $bookDescription book description
+	 * @uses string $assertBookDetails() 
 	 */
 	protected function assertBookListEntry($bookId, $bookTitle, $bookAuthor, $bookDescription)
 	{
@@ -182,21 +253,29 @@ class Oblig1Test extends \PHPUnit_Framework_TestCase
 
 		// Find the book entry and verify the data matches the expected value
 		$book = $page->find('xpath', 'body/table/tbody/tr[@id="book' . $bookId . '"]');
-        $this->assertEquals($bookId, $book->find('xpath', 'td[1]/a')->getText(), 'assertBookListEntry: id');
-        $this->assertEquals($bookTitle, $book->find('xpath', 'td[position() = 2]')->getText(), 'assertBookListEntry: title');
-        $this->assertEquals($bookAuthor, $book->find('xpath', 'td[position() = 3]')->getText(), 'assertBookListEntry: author');
-        $this->assertEquals($bookDescription, $book->find('xpath', 'td[position() = 4]')->getText(), 'assertBookListEntry: description');
+		if ($book)
+		{
+			$this->assertEquals($bookId, $book->find('xpath', 'td[1]/a')->getText(), 'assertBookListEntry: id');
+			$this->assertEquals($bookTitle, $book->find('xpath', 'td[position() = 2]')->getText(), 'assertBookListEntry: title');
+			$this->assertEquals($bookAuthor, $book->find('xpath', 'td[position() = 3]')->getText(), 'assertBookListEntry: author');
+			$this->assertEquals($bookDescription, $book->find('xpath', 'td[position() = 4]')->getText(), 'assertBookListEntry: description');
 		
-		// Further verify that the content is the same on the details page
-		$this->assertBookDetails($bookId, $bookTitle, $bookAuthor, $bookDescription);
+			// Further verify that the content is the same on the details page
+			$this->assertBookDetails($bookId, $bookTitle, $bookAuthor, $bookDescription);
+		}
+		else
+		{
+			// Book not found
+			$this->assertTrue(false, "assertBookListEntry: book expected for id=$bookId");
+		}
 	}
 
 	/**
 	 * Asserts that data about a book matches the data displayed on the book details page.
-	 * @param $bookId id of the book to be asserted.
-	 * @param $bookTitle book title 
-	 * @param $bookAuthor book author
-	 * @param $bookDescription book description
+	 * @param integer $bookId id of the book to be asserted.
+	 * @param string $bookTitle book title 
+	 * @param string $bookAuthor book author
+	 * @param string $bookDescription book description
 	 */
     protected function assertBookDetails($bookId, $bookTitle, $bookAuthor, $bookDescription)
     {
@@ -213,28 +292,50 @@ class Oblig1Test extends \PHPUnit_Framework_TestCase
     }
 	
 	/**
-	 * General test of the book collection page.
+	 * Checks if the page is the expected one - based on page title.
+	 * @param DOMElement $page DocumentElement The root element of page to be checked.
+	 * @param integer $expectedIdx The index of the expected page - within the
+     *                $PAGE_TITLE array
+	 * @param string $bookAuthor book author
+	 * @see $PAGE_TITLES book description
+	 */
+	protected function isExpectedPage($page, $expectedIdx)
+	{
+		$title = null;
+		$titleEl = $page->find('xpath', 'head/title');
+		
+		// Page has a title element
+		if ($titleEl)
+		{
+			$title = $titleEl->getText();
+		}
+		
+		// Compare title to the expected value
+		return $title === self::$PAGE_TITLES[$expectedIdx];
+	}
+	
+	/**
+	 * General test of the structure of book collection page.
 	 */
     public function testBookCollectionPage()
     {
         $this->session->visit($this->baseUrl);
         $page = $this->session->getPage();
 
-		// Verifying title 
-        $title = $page->find('xpath', 'head/title');
-        $this->assertEquals('Book Collection', $title->getText(), 'testBookCollectionPage: page title');
+		// Verifying that a collection page was returned 
+        $this->assertTrue($this->isExpectedPage($page, self::COLLECTION_PAGE_TITLE_IDX), 'testBookCollectionPage: expecting collection page');
 
 		// Verifying the presence of the form for adding new books
 		$addForm = $page->find('xpath', 'body/form[@id="addForm"]');
-		$this->assertNotNull($addForm, 'testBookCollectionPage: addForm');
+		$this->assertNotNull($addForm, 'testBookCollectionPage: addForm present');
 
 		// Verifying the presence of the operator for adding new books
 		$addOp = $addForm->find('xpath', 'input[@name="op"]');
-        $this->assertEquals('add', $addOp->getValue(), 'testBookCollectionPage: page title');
+        $this->assertEquals('add', $addOp->getValue(), 'testBookCollectionPage: expecting add operation request');
 	}
 	
 	/**
-	 * General test of the book details page
+	 * General test of the structure of the book details page
 	 * @depends testBookCollectionPage
 	 */
     public function testBookDetailsPage()
@@ -247,40 +348,48 @@ class Oblig1Test extends \PHPUnit_Framework_TestCase
         $page = $this->session->getPage();
 
 		// Verifying page title
-        $title = $page->find('xpath', 'head/title');
-        $this->assertEquals('Book Details', $title->getText(), 'testBookDetailsPage: page title');
+        $this->assertTrue($this->isExpectedPage($page, self::DETAILS_PAGE_TITLE_IDX), 'testBookDetailsPage: expecting details page');
 
 		// Verifying the form for modifying book data
         $form = $page->find('xpath', 'body/form[@id="modForm"]');
-		$this->assertNotNull($form, 'testBookDetailsPage: modForm');
+		$this->assertNotNull($form, 'testBookDetailsPage: modForm', 'testBookDetailsPage: expecting modForm present');
 		$op = $form->find('xpath', 'input[@name="op"]');
-        $this->assertEquals('mod', $op->getValue(), 'testBookCollectionPage: mod operation');
+        $this->assertEquals('mod', $op->getValue(), 'testBookDetailsPage: expecting mod operation request');
 
 		// Verifying the form for deleting book entries
         $form = $page->find('xpath', 'body/form[@id="delForm"]');
-		$this->assertNotNull($form, 'testBookDetailsPage: delForm');
+		$this->assertNotNull($form, 'testBookDetailsPage: delForm', 'testBookDetailsPage: expecting delForm present');
 		$op = $form->find('xpath', 'input[@name="op"]');
-        $this->assertEquals('del', $op->getValue(), 'testBookCollectionPage: del operation');
+        $this->assertEquals('del', $op->getValue(), 'testBookDetailsPage: expecting del operation request');
 	}
 	
 	/**
 	 * Tests adding new books using various book test cases
 	 * @see generateTestCases()
+	 * @todo add functionality for testing unsuccessful cases
 	 * @depends testBookDetailsPage
 	 */
     public function testAdd()
     {
-		$testBookId = -1;
 		$bookListLength = $this->getBookListLength();
 				
 		foreach ($this->generateTestCases() as $testCase)
 		{
-			$this->addBook($testBookId, $testCase['title'], $testCase['author'], $testCase['description']);
-			$bookListLength += 1;
+			if ($testCase[self::OUTCOME_IDX] === self::OUTCOME_SUCCESS)
+			{
+				$testBookId = -1;
+				$this->addBook($testBookId, $testCase['title'], $testCase['author'], $testCase['description']);
+				$bookListLength += 1;
 			
-			// Verifying book content in book list and on book details page
-			$this->assertEquals($bookListLength, $this->getBookListLength(), 'testAdd: bookListLength');		
-			$this->assertBookListEntry($testBookId, $testCase['title'], $testCase['author'], $testCase['description']);
+				// Verifying book content in book list and on book details page
+				$this->assertEquals($bookListLength, $this->getBookListLength(), 'testAdd: bookListLength');		
+				$this->assertBookListEntry($testBookId, $testCase['title'], $testCase['author'], $testCase['description']);
+			}
+			else
+			{
+				// Verifying that error page is returned
+				
+			}
 		}
 	}
 	
@@ -307,6 +416,7 @@ class Oblig1Test extends \PHPUnit_Framework_TestCase
 	/**
 	 * Tests modifying book date using various test cases
 	 * @see generateTestCases()
+	 * @todo add functionality for testing unsuccessful cases
 	 * @depends testBookDetailsPage
 	 */
     public function testModify()
@@ -320,11 +430,19 @@ class Oblig1Test extends \PHPUnit_Framework_TestCase
 				
 		foreach ($this->generateTestCases() as $testCase)
 		{
-			$this->modifyBook($testBookId, $testCase['title'], $testCase['author'], $testCase['description']);
+			if ($testCase[self::OUTCOME_IDX] === self::OUTCOME_SUCCESS)
+			{
+				$this->modifyBook($testBookId, $testCase['title'], $testCase['author'], $testCase['description']);
 
-			// Verifying book content in book list and on book details page
-			$this->assertEquals($bookListLength, $this->getBookListLength(), 'testModify: bookListLength');		
-			$this->assertBookListEntry($testBookId, $testCase['title'], $testCase['author'], $testCase['description']);
+				// Verifying book content in book list and on book details page
+				$this->assertEquals($bookListLength, $this->getBookListLength(), 'testModify: bookListLength');		
+				$this->assertBookListEntry($testBookId, $testCase['title'], $testCase['author'], $testCase['description']);
+			}
+			else
+			{
+				// Verifying that error page is returned
+				
+			}
 		}
     }
 	
@@ -341,8 +459,7 @@ class Oblig1Test extends \PHPUnit_Framework_TestCase
         $page = $this->session->getPage();
 
 		// Verifying that id containing injection code was rejected	
-        $title = $page->find('xpath', 'head/title');
-        $this->assertEquals('Error Page', $title->getText(), 'testSqlInjection: page title');
+        $this->assertTrue($this->isExpectedPage($page, self::ERROR_PAGE_TITLE_IDX), 'testSqlInjection: expecting error page');
 	}
 }
 ?>
