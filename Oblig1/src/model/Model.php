@@ -9,7 +9,7 @@ include_once("model/Book.php");
 class Model
 {								  
     /**
-	 * @todo Use of the session array for storing book collection is to be replaced by a database.
+	 * @todo The session array for storing book collection is to be replaced by a database.
 	 */
 	public function __construct()  
     {  
@@ -24,9 +24,9 @@ class Model
 	}
 	
 	/** Function returning the complete list of books in the collection. Books are
-	 * returned in order of id
-	 * @return an array of book titles indexed and ordered by their id
-	 * @todo replace implementation using a real database
+	 * returned in order of id.
+	 * @return Book[] An array of book objects indexed and ordered by their id.
+	 * @todo Replace implementation using a real database.
 	 */
 	public function getBookList()
 	{
@@ -34,14 +34,14 @@ class Model
 		return $_SESSION['BookList'];
 	}
 	
-	/** Function retrieveing information about a given book in the collection
-	 * @param $id the id of the book to be retrieved
-	 * @return an Book object if a book matching the $id exists in the collection; null
-	 * @todo replace implementation using a real database
+	/** Function retrieveing information about a given book in the collection.
+	 * @param integer $id The id of the book to be retrieved.
+	 * @return Book|null The book matching the $id exists in the collection; null otherwise.
+	 * @todo Replace implementation using a real database.
 	 */
 	public function getBookById($id)
 	{
-		// we use the previous function to get all the books and then we return the requested one.
+		// we use the session book list array to get all the books and then we return the requested one.
 		// in a real life scenario this will be done through a db select command
 		$idx = $this->getBookIndexById($id);
 		if ($idx > -1)
@@ -51,9 +51,9 @@ class Model
 		return null;
 	}
 	
-	/** Adds a new book to the collection
-	 * @param $book the book to be added - the id of the book will be set after successful insertion
-	 * @todo replace implementation using a real database
+	/** Adds a new book to the collection.
+	 * @param $book Book The book to be added - the id of the book will be set after successful insertion.
+	 * @todo Replace implementation using a real database.
 	 */
 	public function addBook($book)
 	{
@@ -61,9 +61,9 @@ class Model
 		$_SESSION['BookList'][] = $book;
 	}
 
-	/** Modifies data related to a book in the collection
-	 * @param $book the modified book version
-	 * @todo replace implementation using a real database
+	/** Modifies data related to a book in the collection.
+	 * @param Book $book The book data to kept.
+	 * @todo Replace implementation using a real database.
 	 */
 	public function modifyBook($book)
 	{
@@ -76,9 +76,9 @@ class Model
 		}
 	}
 
-	/** Deletes data related to a book from the collection
-	 * @param $id the id of the book that should be removed from the collection
-	 * @todo replace implementation using a real database
+	/** Deletes data related to a book from the collection.
+	 * @param integer $id The id of the book that should be removed from the collection.
+	 * @todo Replace implementation using a real database.
 	 */
 	public function deleteBook($id)
 	{
@@ -90,8 +90,9 @@ class Model
 	}
 	
 	/** Helper function finding the location of the book in the collection array.
-	 * @param $id the id of the book to look for
-	 * @todo replace with a call to a database auto_increment function
+	 * @param integer $id The id of the book to look for.
+	 * @return integer The index of the book in the collection array; -1 if the book is
+	 *                 not found in the array.
 	 */
 	protected function getBookIndexById($id)
 	{
@@ -106,8 +107,8 @@ class Model
 	}
 	
 	/** Helper function generating a sequence of ids.
-	 * @return an value larger than the largest book id in the collection
-	 * @todo replace with a call to a database auto_increment function
+	 * @return integer A value larger than the largest book id in the collection.
+	 * @todo Replace with a call to a database auto_increment function.
 	 */
 	protected function nextId()
 	{

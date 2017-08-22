@@ -12,10 +12,10 @@ Class BookView extends View {
 	
     /** Constructor 
      * @author Rune Hjelsvold
-	 * @param $book The book to be shown.
-	 * @param $opParamName The name of the parameter to used in the query string for passing the operation to be performed.
-	 * @param $delOpName The name to be used for the delete operation.
-	 * @param $modOpName The name to be used the modify operation.
+	 * @param Book $book The book to be shown.
+	 * @param string $opParamName The name of the parameter to used in the query string for passing the operation to be performed.
+	 * @param string $delOpName The name to be used for the delete operation.
+	 * @param string $modOpName The name to be used the modify operation.
      * @see http://php-html.net/tutorials/model-view-controller-in-php/ The tutorial code used as basis.
      */
 	public function __construct($book, $opParamName, $delOpName, $modOpName)  
@@ -27,7 +27,8 @@ Class BookView extends View {
     } 
 	
 	/** Used by the superclass to generate page title
-	 */
+	  * @return string Page title.
+	  */
 	protected function getPageTitle() {
 		return 'Book Details';
 	}

@@ -6,12 +6,12 @@
 
 abstract Class View {
 	/** Is used to retrieve the title of the given view page
-	 * @return view page title
+	 * @return string View page title.
 	 */
     abstract protected function getPageTitle();
 	
 	/** Is used to retrieve the page content of the given view page
-	 * @return view page content
+	 * @return string View page content.
 	 */
 	abstract protected function getPageContent();
 

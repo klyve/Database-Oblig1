@@ -13,9 +13,9 @@ Class BookListView extends View {
 	
     /** Constructor 
      * @author Rune Hjelsvold
-	 * @param $books The collection of books - in the form of an array of Books - to be shown.
-	 * @param $opParamName The name of the parameter to used in the query string for passing the operation to be performed.
-	 * @param $addOpName The name to be used for the add operation.
+	 * @param Books[] $books The collection of books - in the form of an array of Books - to be shown.
+	 * @param string $opParamName The name of the parameter to used in the query string for passing the operation to be performed.
+	 * @param string $addOpName The name to be used for the add operation.
      * @see http://php-html.net/tutorials/model-view-controller-in-php/ The tutorial code used as basis.
      */
 	public function __construct($books, $opParamName, $addOpName)  
@@ -26,12 +26,14 @@ Class BookListView extends View {
     } 
 	
 	/** Used by the superclass to generate page title
+	 * @return string Page title to be generated.
 	 */
 	protected function getPageTitle() {
 		return 'Book Collection';
 	}
 	
 	/** Used by the superclass to generate page content
+	 * @return string Content of page to be generated.
 	 */
 	protected function getPageContent() {
 		$content = <<<HTML
@@ -42,11 +44,14 @@ Class BookListView extends View {
   </thead>
   <tbody>
 HTML;
-
-		foreach ($this->books as $book) {
-    		$content .= '<tr id="book' . $book->id . '"><td><a href="index.php?id=' . $book->id . '">' . $book->id . '</a></td>'
-			          . '<td>' . htmlspecialchars($book->title) . '</td><td>' . htmlspecialchars($book->author) . '</td>'
-					  . '<td>' . htmlspecialchars($book->description) . '</td></tr>';
+		if (isset($this->books))
+		{
+			foreach ($this->books as $book)
+			{
+				$content .= '<tr id="book' . $book->id . '"><td><a href="index.php?id=' . $book->id . '">' . $book->id . '</a></td>'
+						 . '<td>' . htmlspecialchars($book->title) . '</td><td>' . htmlspecialchars($book->author) . '</td>'
+						 . '<td>' . htmlspecialchars($book->description) . '</td></tr>';
+			}
 		}
 
 		$content .= <<<HTML
@@ -60,6 +65,7 @@ HTML;
 	}
 	
 	/** Helper function generating HTML code for the form for adding new books to the collection
+	 * @return string The HTML code to be generated.
 	 */
 	protected function createAddForm() {
 		return 

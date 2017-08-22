@@ -27,7 +27,7 @@ class Controller {
         $this->model = new Model();
     } 
 	
-/** The one function running the controller code
+/** The one function running the controller code.
  */
 	public function invoke()
 	{
