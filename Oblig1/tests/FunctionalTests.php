@@ -7,7 +7,7 @@ require_once("vendor/autoload.php");
  * Please set the value of the $baseUrl to the URL of the assignment page
  * @author Rune Hjelsvold
  */
-class FunctionalTests extends \PHPUnit_Framework_TestCase
+class FunctionalTests extends \PHPUnit\Framework\TestCase
 {
 	/**
 	* Index of the collection page title in the PAGE_TITLES array
@@ -316,6 +316,7 @@ class FunctionalTests extends \PHPUnit_Framework_TestCase
 	
 	/**
 	 * General test of the structure of book collection page.
+	 * @test
 	 */
     public function testBookCollectionPage()
     {
