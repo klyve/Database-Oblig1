@@ -1,12 +1,13 @@
 <?php
 
-include_once("model/Book.php");
+include_once("Book.php");
+include_once("Imodel.php");
 
 /** The Model is the class holding data about a collection of books. 
  * @author Rune Hjelsvold
  * @see http://php-html.net/tutorials/model-view-controller-in-php/ The tutorial code used as basis.
  */
-class Model
+class Model implements IModel
 {								  
     /**
 	 * @todo The session array for storing book collection is to be replaced by a database.
@@ -18,7 +19,7 @@ class Model
 		{
 			$_SESSION['BookList'] = array(new Book("Jungle Book", "R. Kipling", "A classic book.", 1),
 										  new Book("Moonwalker", "J. Walker", "", 2),
-										  new Book("PHP for Dummies", "Some Smart Guy", "", 3)
+										  new Book("PHP for Dummies", "J. Valade", "Some smart gal.", 3)
 									);
 		} 
 	}
