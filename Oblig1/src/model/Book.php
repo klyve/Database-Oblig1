@@ -11,12 +11,12 @@ class Book {
 	public $description;
 
 /** Constructor
- * @param $title Book title
- * @param $author Book author 
- * @param $description Book description 
- * @param $id Book id (optional) 
+ * @param string $title Book title
+ * @param string $author Book author 
+ * @param string $description Book description 
+ * @param integer $id Book id (optional) 
  */
-	public function __construct($title, $author, $description, $id = null)  
+	public function __construct($title, $author, $description, $id = -1)  
     {  
         $this->id = $id;
         $this->title = $title;
