@@ -6,6 +6,22 @@ include_once('View.php');
  * @see http://php-html.net/tutorials/model-view-controller-in-php/ The tutorial code used as basis.
  */
 Class ErrorView extends View {
+	protected $message = null;
+	/** Set a message to be given to the end user if 
+	 * @$msg string The message to pass to the user.
+	 */	 
+	public function __construct($msg = null)
+	{
+		if ($msg) 
+		{
+		    $this->message = $msg;
+		}
+		else
+		{
+			$this->message = 'Something bad happened.';
+		}
+	}
+
 	/** Used by the superclass to generate page title
 	 */
 	protected function getPageTitle() {
@@ -15,7 +31,7 @@ Class ErrorView extends View {
 	/** Used by the superclass to generate page content
 	 */
 	protected function getPageContent() {
-        return '<p>Something bad happened. Please try again later.</p>';
+        return "<p>{$this->message}</p><p><a href=index.php>Back to book list</a></p>";
 	}	
 }
 ?>
