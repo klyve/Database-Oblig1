@@ -167,16 +167,24 @@ class FunctionalTests extends \PHPUnit\Framework\TestCase
 		$addForm->submit();
 		
         $page = $this->session->getPage();	
-		// Verify that the collection page was returned
-        $this->assertTrue($this->isExpectedPage($page, self::COLLECTION_PAGE_TITLE_IDX), 'addBook: expecting collection page');
 
-		// Record the id of the book if it was added to the list
-		if ($this->getBookListLength($page) > $listLength)
+		if ($expectedOutcome == self::OUTCOME_SUCCESS)
 		{
-			// Record the id that was assigned to the book - assuming that the newest book is the last and that id has the format bookXXX
-			$id = substr($page->find('xpath', 'body/table/tbody/tr[last()]/@id')->getText(),4);
+		    // Verify that the collection page was returned
+            $this->assertTrue($this->isExpectedPage($page, self::COLLECTION_PAGE_TITLE_IDX), 'addBook: expecting collection page');
+
+		    // Record the id of the book if it was added to the list
+		    if ($this->getBookListLength($page) > $listLength)
+		    {
+		    	// Record the id that was assigned to the book - assuming that the newest book is the last and that id has the format bookXXX
+			    $id = substr($page->find('xpath', 'body/table/tbody/tr[last()]/@id')->getText(),4);
 		
-			$this->testBookIds[] = $id;
+			    $this->testBookIds[] = $id;
+		    }
+			else
+			{
+				$this->assertTrue($this->isExpectedPage($page, self::ERROR_PAGE_TITLE_IDX), 'addBook: expecting error page');
+			}
 		}
 	}
 		

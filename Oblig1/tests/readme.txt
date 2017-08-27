@@ -17,3 +17,5 @@ Run the tests by opening a shell/command window. Go to the tests directory. Run 
    phpunit6 FunctionalTests.php
 
 You should run the unit tests whenever you add or modify code in the model class and you should run the functional tests when you all the unit tests are passed.
+
+The unit tests assume that you are using a database named test containing a table named Book with attributes id, title, author, and description. These names appear in both the UnitTestFixtures.php and in UnitTests.php.

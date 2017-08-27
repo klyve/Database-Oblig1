@@ -1,6 +1,7 @@
 <?php
 require_once("vendor/autoload.php");
 require_once("../src/model/DBModel.php");
+require_once("TestDBProps.php");
 
 use PHPUnit\Framework\TestCase;
 use PHPUnit\DbUnit\TestCaseTrait;
@@ -94,7 +95,7 @@ class UnitTests extends TestCase
     {
         if ($this->conn === null) {
             if (self::$pdo == null) {
-                self::$pdo = new PDO( 'mysql:dbname=test;host=localhost', 'runehj', 'IMT2571::admin' );
+                self::$pdo = new PDO('mysql:dbname=test;host=' . TEST_DB_HOST, TEST_DB_USER, TEST_DB_PWD);
             }
             $this->conn = $this->createDefaultDBConnection(self::$pdo, 'test');
         }
