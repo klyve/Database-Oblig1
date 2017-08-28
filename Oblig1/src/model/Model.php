@@ -1,7 +1,7 @@
 <?php
 
 include_once("Book.php");
-include_once("Imodel.php");
+include_once("IModel.php");
 
 /** The Model is the class holding data about a collection of books. 
  * @author Rune Hjelsvold
