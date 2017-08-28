@@ -95,7 +95,9 @@ class UnitTests extends TestCase
     {
         if ($this->conn === null) {
             if (self::$pdo == null) {
-                self::$pdo = new PDO('mysql:dbname=test;host=' . TEST_DB_HOST, TEST_DB_USER, TEST_DB_PWD);
+                self::$pdo = new PDO('mysql:dbname=test;host=' . TEST_DB_HOST,
+                        				TEST_DB_USER, TEST_DB_PWD,
+										array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION));
             }
             $this->conn = $this->createDefaultDBConnection(self::$pdo, 'test');
         }
@@ -155,7 +157,7 @@ class UnitTests extends TestCase
 		$dbSize = $this->getConnection()->getRowCount('book');
 		
 		// Run tests for all non-fixture cases
-		for ($i = self::FIXTURE_SIZE; $i < sizeof(self::$TEST_CASES[$i]); $i++)
+		for ($i = self::FIXTURE_SIZE; $i < sizeof(self::$TEST_CASES); $i++)
 		{
 			// Run test for cases that should succeed without problems
 			if (self::$TEST_CASES[$i][self::OUTCOME_IDX] == self::OUTCOME_SUCCESS)
@@ -189,13 +191,15 @@ class UnitTests extends TestCase
 		$model = new DBModel(self::$pdo);
 		
 		// Run tests for all non-fixture cases
-		for ($i = self::FIXTURE_SIZE; $i < sizeof(self::$TEST_CASES[$i]); $i++)
+		for ($i = self::FIXTURE_SIZE; $i < sizeof(self::$TEST_CASES); $i++)
 		{
 			// Run test for cases that should succeed without problems
 			if (self::$TEST_CASES[$i][self::OUTCOME_IDX] == self::OUTCOME_SUCCESS)
 			{
-                // Using the first test case as the target for modification
+				// Keeping test case id for cleanup
                 $realId = self::$TEST_CASES[$i]['id'];
+
+                // Adding a new test case as the target for modification
 				self::$TEST_CASES[$i]['id'] = self::$TEST_CASES[0]['id'];
 				$book = $this->generateTestBook($i);
 				$model->modifyBook($book);
@@ -205,6 +209,10 @@ class UnitTests extends TestCase
 				
 				// Reset id for test case
                 self::$TEST_CASES[$i]['id'] = $realId;
+				
+				// Restore database values
+				$book = $this->generateTestBook(0);
+				$model->modifyBook($book);
 			}
 			else
 			{
