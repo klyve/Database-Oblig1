@@ -152,7 +152,7 @@ class FunctionalTests extends \PHPUnit\Framework\TestCase
 	 * @param string $description description of the book to be added.
 	 * @see teardown()
 	 */
- 	protected function addBook(&$id, $title, $author, $description)
+ 	protected function addBook(&$id, $title, $author, $description, $expectedOutcome = self::OUTCOME_SUCCESS)
 	{
 		// Load book list to get to the addForm
         $this->session->visit($this->baseUrl);
