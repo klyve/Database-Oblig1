@@ -55,7 +55,7 @@ class DBModel implements IModel
      * @param $book Book The book to be added - the id of the book will be set after successful insertion.
 	 * @throws PDOException
      */
-    public function addBook(&$book)
+    public function addBook($book)
     {
     }
 
