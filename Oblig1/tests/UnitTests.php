@@ -203,7 +203,8 @@ class UnitTests extends TestCase
                 // Verify that data was correctly changed
 				$this->assertBookData($i, $model->getBookById(self::$TEST_CASES[$i]['id']));
 				
-				// Reset id in 
+				// Reset id for test case
+                self::$TEST_CASES[$i]['id'] = $realId;
 			}
 			else
 			{
