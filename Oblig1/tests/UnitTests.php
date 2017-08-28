@@ -180,6 +180,9 @@ class UnitTests extends TestCase
 	
     /**
      * Tests for DBModel::modifyBook()
+	 * Warning, this method has a potential side effect: id of elements in
+	 * TEST_CASES may be changed if the test fails.
+	 * @see TEST_CASES
      */	 
 	public function testModifyBook()
 	{
@@ -191,13 +194,16 @@ class UnitTests extends TestCase
 			// Run test for cases that should succeed without problems
 			if (self::$TEST_CASES[$i][self::OUTCOME_IDX] == self::OUTCOME_SUCCESS)
 			{
-                // Using the first test case as the target for modifications				
+                // Using the first test case as the target for modification
+                $realId = self::$TEST_CASES[$i]['id'];
 				self::$TEST_CASES[$i]['id'] = self::$TEST_CASES[0]['id'];
 				$book = $this->generateTestBook($i);
 				$model->modifyBook($book);
 
                 // Verify that data was correctly changed
-				$this->assertBookData($i, $book);
+				$this->assertBookData($i, $model->getBookById(self::$TEST_CASES[$i]['id']));
+				
+				// Reset id in 
 			}
 			else
 			{
