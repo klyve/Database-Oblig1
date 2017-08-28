@@ -181,10 +181,10 @@ class FunctionalTests extends \PHPUnit\Framework\TestCase
 		
 			    $this->testBookIds[] = $id;
 		    }
-			else
-			{
-				$this->assertTrue($this->isExpectedPage($page, self::ERROR_PAGE_TITLE_IDX), 'addBook: expecting error page');
-			}
+		}
+		else
+		{
+			$this->assertTrue($this->isExpectedPage($page, self::ERROR_PAGE_TITLE_IDX), 'addBook: expecting error page');
 		}
 	}
 		
