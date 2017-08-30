@@ -264,12 +264,13 @@ class FunctionalTests extends \PHPUnit\Framework\TestCase
 		if ($book)
 		{
 			$this->assertEquals($bookId, $book->find('xpath', 'td[1]/a')->getText(), 'assertBookListEntry: id');
+			$detailsLink = $book->find('xpath', 'td[1]/a');
 			$this->assertEquals($bookTitle, $book->find('xpath', 'td[position() = 2]')->getText(), 'assertBookListEntry: title');
 			$this->assertEquals($bookAuthor, $book->find('xpath', 'td[position() = 3]')->getText(), 'assertBookListEntry: author');
 			$this->assertEquals($bookDescription, $book->find('xpath', 'td[position() = 4]')->getText(), 'assertBookListEntry: description');
 		
 			// Further verify that the content is the same on the details page
-			$this->assertBookDetails($bookId, $bookTitle, $bookAuthor, $bookDescription);
+			$this->assertBookDetails($detailsLink, $bookId, $bookTitle, $bookAuthor, $bookDescription);
 		}
 		else
 		{
@@ -285,10 +286,10 @@ class FunctionalTests extends \PHPUnit\Framework\TestCase
 	 * @param string $bookAuthor book author
 	 * @param string $bookDescription book description
 	 */
-    protected function assertBookDetails($bookId, $bookTitle, $bookAuthor, $bookDescription)
+    protected function assertBookDetails($detailsLink, $bookId, $bookTitle, $bookAuthor, $bookDescription)
     {
 		// Load book details page
-		$this->session->visit($this->baseUrl . '?id=' . $bookId);
+		$detailsLink->click();
         $page = $this->session->getPage();		
 
 		// Verify values shown on form
