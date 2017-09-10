@@ -51,7 +51,7 @@ class FunctionalTests extends \PHPUnit\Framework\TestCase
 	/**
 	 * Holds the root URL for the Oblig 1 site.
 	 */
-	protected $baseUrl = 'http://localhost/IMT2571/assignment1';
+	protected $baseUrl = 'http://localhost:3000';
 	
 	/**
 	 * The Mink Session object.
@@ -124,6 +124,27 @@ class FunctionalTests extends \PHPUnit\Framework\TestCase
 					    'description' => '<script document.body.style.visibility="hidden" />',
 						self::OUTCOME_IDX => self::OUTCOME_SUCCESS
 					);
+		$cases[3] = array
+		(
+			'title' => '',
+			'author' => 'Author still here',
+			'description' => 'description',
+			self::OUTCOME_IDX => self::OUTCOME_FAILURE
+		);
+		$cases[4] = array
+		(
+			'title' => 'Title still here',
+			'author' => '',
+			'description' => 'Description',
+			self::OUTCOME_IDX => self::OUTCOME_FAILURE
+		);
+		$cases[5] = array
+		(
+			'title' => '',
+			'author' => '',
+			'description' => 'Description',
+			self::OUTCOME_IDX => self::OUTCOME_FAILURE
+		);
 		return $cases;
 	}
 	
@@ -397,8 +418,8 @@ class FunctionalTests extends \PHPUnit\Framework\TestCase
 			}
 			else
 			{
-				// Verifying that error page is returned
-				
+				$this->addBook($testCase['id'], $testCase['title'], $testCase['author'], $testCase['description'], self::OUTCOME_FAILURE);
+				$this->assertEmpty($testCase['id']);
 			}
 		}
 	}
@@ -450,8 +471,9 @@ class FunctionalTests extends \PHPUnit\Framework\TestCase
 			}
 			else
 			{
-				// Verifying that error page is returned
-				
+				$this->modifyBook($testBookId, $testCase['title'], $testCase['author'], $testCase['description']);
+				$page = $this->session->getPage();	
+				$this->assertTrue($this->isExpectedPage($page, self::ERROR_PAGE_TITLE_IDX), 'addBook: expecting error page');
 			}
 		}
     }

@@ -84,7 +84,25 @@ class UnitTests extends TestCase
 						      'author' => '<script document.body.style.visibility="hidden" />',
                               'description' => '<script document.body.style.visibility="hidden" />',
 							  self::OUTCOME_IDX => self::OUTCOME_SUCCESS
-                       )
+						),
+						array ('id' => null, 
+							'title' => '',
+							'author' => 'Test author',
+							'description' => 'Test description',
+							self::OUTCOME_IDX => self::OUTCOME_FAILURE
+						),						
+						array ('id' => null, 
+							'title' => "Test title with ' inside",
+							'author' => "",
+							'description' => "Test description with ' inside",
+							self::OUTCOME_IDX => self::OUTCOME_FAILURE
+						),						
+						array ('id' => null, 
+							'title' => '',
+							'author' => '',
+							'description' => 'Test description',
+							self::OUTCOME_IDX => self::OUTCOME_FAILURE
+						)
                     );					   
 
     /**
@@ -95,11 +113,11 @@ class UnitTests extends TestCase
     {
         if ($this->conn === null) {
             if (self::$pdo == null) {
-                self::$pdo = new PDO('mysql:dbname=test;host=' . TEST_DB_HOST,
+                self::$pdo = new PDO('mysql:dbname='.TEST_DB_NAME.';host=' . TEST_DB_HOST,
                         				TEST_DB_USER, TEST_DB_PWD,
 										array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION));
             }
-            $this->conn = $this->createDefaultDBConnection(self::$pdo, 'test');
+            $this->conn = $this->createDefaultDBConnection(self::$pdo, TEST_DB_NAME);
         }
 
         return $this->conn;
@@ -178,7 +196,9 @@ class UnitTests extends TestCase
 			}
 			else
 			{
-				//TODO: Add tests for unsuccessful cases
+				$this->expectException(InvalidArgumentException::class);
+				$book = $this->generateTestBook($i);
+				$model->addBook($book);
 			}
 		}
 	}
@@ -219,7 +239,9 @@ class UnitTests extends TestCase
 			}
 			else
 			{
-				//TODO: Add tests for unsuccessful cases
+				$this->expectException(InvalidArgumentException::class);
+				$book = $this->generateTestBook($i);
+				$model->modifyBook($book);
 			}
 		}
 	}

@@ -34,44 +34,47 @@ class Controller {
 		if (isset($_GET['id']))
 		{
 			// show the requested book
-			$book = $this->model->getBookById($_GET['id']);
-			if ($book)
-			{
-				$view = new BookView($book, self::$OP_PARAM_NAME, self::$DEL_OP_NAME, self::$MOD_OP_NAME);
-				$view->create();
-			}
-			else
-			{
-				$view = new ErrorView();
+			try {
+				$book = $this->model->getBookById($_GET['id']);
+				if ($book) {
+					$view = new BookView($book, self::$OP_PARAM_NAME, self::$DEL_OP_NAME, self::$MOD_OP_NAME);
+					$view->create();
+				}else {
+					throw new InvalidArgumentException("Could not find book");
+				}
+			}catch(Exception $err) {
+				$view = new ErrorView($err->getMessage());
 				$view->create();
 			}
 		}
 		else 
 		{
-			if (isset($_POST[self::$OP_PARAM_NAME]))//A book record is to be added, deleted, or modified
-			{
-				switch($_POST[self::$OP_PARAM_NAME]) 
+			try {
+				if (isset($_POST[self::$OP_PARAM_NAME]))//A book record is to be added, deleted, or modified
 				{
-				case self::$ADD_OP_NAME : 
-				    $book = new Book($_POST['title'], $_POST['author'], $_POST['description']);
-				    $this->model->addBook($book);
-				    break;
-				case self::$DEL_OP_NAME : 
-				    $this->model->deleteBook($_POST['id']);
-				    break;
-				case self::$MOD_OP_NAME : 
-				    $book = new Book($_POST['title'], $_POST['author'], $_POST['description'], $_POST['id']);
-				    $this->model->modifyBook($book);
-				    break;				
+					switch($_POST[self::$OP_PARAM_NAME]) 
+					{
+					case self::$ADD_OP_NAME:
+						$book = new Book($_POST['title'], $_POST['author'], $_POST['description']);
+						$this->model->addBook($book);
+						break;
+					case self::$DEL_OP_NAME:
+						$this->model->deleteBook($_POST['id']);
+						break;
+					case self::$MOD_OP_NAME:
+						$book = new Book($_POST['title'], $_POST['author'], $_POST['description'], $_POST['id']);
+						$this->model->modifyBook($book);
+						break;
+					}
 				}
+				// no special book is requested, we'll show a list of all available books
+				$books = $this->model->getBookList();
+				$view = new BookListView($books, self::$OP_PARAM_NAME, self::$ADD_OP_NAME);
+				$view->create();
+			}catch(Exception $err) {
+				$view = new ErrorView($err->getMessage());
+				$view->create();
 			}
-
-			// no special book is requested, we'll show a list of all available books
-			$books = $this->model->getBookList();
-			$view = new BookListView($books, self::$OP_PARAM_NAME, self::$ADD_OP_NAME);
-			$view->create();
 		}
 	}
 }
-
-?>

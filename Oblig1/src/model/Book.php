@@ -16,8 +16,23 @@ class Book {
  * @param string $description Book description 
  * @param integer $id Book id (optional) 
  */
-	public function __construct($title, $author, $description, $id = -1)  
-    {  
+	public function __construct()  
+    {
+		$numargs = func_num_args();
+		$id = -1;
+		if($numargs == 1) {
+			$book = func_get_arg(0);
+			$id = $book->id;
+			$title = $book->title;
+			$author = $book->author;
+			$description = $book->description;
+		}elseif($numargs > 2) {
+			if($numargs == 4)
+				$id = func_get_arg(3);
+			$title = func_get_arg(0);
+			$author = func_get_arg(1);
+			$description = func_get_arg(2);
+		}
         $this->id = $id;
         $this->title = $title;
 	    $this->author = $author;
