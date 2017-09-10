@@ -473,7 +473,7 @@ class FunctionalTests extends \PHPUnit\Framework\TestCase
 			{
 				$this->modifyBook($testBookId, $testCase['title'], $testCase['author'], $testCase['description']);
 				$page = $this->session->getPage();	
-				$this->assertTrue($this->isExpectedPage($page, self::ERROR_PAGE_TITLE_IDX), 'addBook: expecting error page');
+				$this->assertTrue($this->isExpectedPage($page, self::ERROR_PAGE_TITLE_IDX), 'modifyBook: expecting error page');
 			}
 		}
     }
